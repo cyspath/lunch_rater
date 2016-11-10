@@ -18,29 +18,6 @@ var router = express.Router();
 
 
 var app = express();
-//
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : ''
-// });
-//
-// connection.query('USE lunch_rater');
-//
-// app.set('port', 3000);
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-// app.use(express.static(path.join(__dirname, 'public')));
-//
-// app.get('/', function(req, res){
-//   connection.query('SELECT * FROM users', function(err, rows){
-//     res.render('users', {users : rows});
-//   });
-// });
-//
-// app.listen(app.get('port'));
-// console.log('Express server listening on port ' + app.get('port'));
-//
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -85,28 +62,6 @@ app.get("/fetch", function(req, res) {
       processResponse(result);
   })
 
-  // var urlPrefix = req.query.url.match(/.*?:\/\//g);
-  // req.query.url = req.query.url.replace(/.*?:\/\//g, "");
-  // var options = {
-  //     hostname: req.query.url
-  // };
-  //
-  // if(urlPrefix !== undefined && urlPrefix !== null && urlPrefix[0] === "https://") {
-  //     options.port = 443;
-  //     https.get(options, function(result) {
-  //         processResponse(result);
-  //     }).on('error', function(e) {
-  //         res.send({message: e.message});
-  //     });
-  // } else {
-  //     options.port = 80;
-  //     http.get(options, function(result) {
-  //         processResponse(result);
-  //     }).on('error', function(e) {
-  //         res.send({message: e.message});
-  //     });
-  // }
-
   var processResponse = function(result) {
       var data = "";
       result.on("data", function(chunk) {
@@ -115,26 +70,29 @@ app.get("/fetch", function(req, res) {
       var tags = [];
       var tagsCount = {};
       var tagsWithCount = [];
+      var rows = [];
       result.on("end", function(chunk) {
           var parser = new htmlparser.Parser({
-              onopentag: function(name, attribs) {
-                  if(tags.indexOf(name) === -1) {
-                      tags.push(name);
-                      tagsCount[name] = 1;
-                  } else {
-                      tagsCount[name]++;
-                  }
-              },
-              onend: function() {
-                  for(var i = 0; i < tags.length; i++) {
-                      tagsWithCount.push({name: tags[i], count: tagsCount[tags[i]]});
-                  }
+              ontext: function(text){
+                if (isNaN(text)) {
+                  rows.push(text);
+                  console.log(text);
+                }
               }
           }, {decodeEntities: true});
           parser.write(data);
           parser.end();
-          res.send({website: req.query.url, port: options.port, data: data, tags: tagsWithCount});
+          res.send({ website: req.query.url, data: data, rows: rows });
       });
+  }
+
+  var formatObj = function (rows) {
+    var result = [];
+    var days = ["Monday,", "Tuesday,", "Wednesday,", "Thursday"]
+    var endStr = "Allergen Legend"
+    for (var i = 0; i < rows.length; i++) {
+      rows[i]
+    }
   }
 
 });
