@@ -23,7 +23,7 @@ $(document).ready(function () {
     console.log('clicked');
     $.ajax({
       type: 'GET',
-      url: '/fetch',
+      url: '/fetchMenu',
       data: {
       },
       error: function() {

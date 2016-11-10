@@ -50,7 +50,13 @@ app.post('/rateup', function(req, res) {
   res.send(200, "rateup!");
 });
 
-app.get("/fetch", function(req, res) {
+var dataStore = [];
+
+app.get('/update', function(req, res) {
+  res.send(200, dataStore);
+});
+
+app.get("/fetchMenu", function(req, res) {
 
   options = {
     host: 'docs.google.com',
@@ -67,22 +73,19 @@ app.get("/fetch", function(req, res) {
       result.on("data", function(chunk) {
           data += chunk;
       });
-      var tags = [];
-      var tagsCount = {};
-      var tagsWithCount = [];
       var rows = [];
       result.on("end", function(chunk) {
           var parser = new htmlparser.Parser({
               ontext: function(text){
                 if (isNaN(text)) {
                   rows.push(text);
-                  console.log(text);
                 }
               }
           }, {decodeEntities: true});
           parser.write(data);
           parser.end();
-          res.send({ website: req.query.url, data: data, rows: rows });
+          dataStore = formatObj(rows);
+          res.send({ data: dataStore, html: data });
       });
   }
 
@@ -90,9 +93,32 @@ app.get("/fetch", function(req, res) {
     var result = [];
     var days = ["Monday,", "Tuesday,", "Wednesday,", "Thursday"]
     var endStr = "Allergen Legend"
+
+    var addDish = false;
+    var id = 1;
     for (var i = 0; i < rows.length; i++) {
-      rows[i]
+      if (rows[i].indexOf(endStr) != -1) {
+        break;
+      }
+      if (containsAny(rows[i], days)) {
+        result.push({ header: rows[i], dishes: [] })
+        addDish = true;
+      } else if (addDish) {
+        result[result.length - 1].dishes.push({ id: id, name: rows[i], upvotes: 0, downvotes: 0 });
+        id ++;
+      }
     }
+    return result;
+  }
+
+  function containsAny(str, substrings) {
+    for (var i = 0; i != substrings.length; i++) {
+       var substring = substrings[i];
+       if (str.indexOf(substring) != -1) {
+         return true;
+       }
+    }
+    return false;
   }
 
 });
