@@ -1,6 +1,9 @@
 ### Heroku URL
 https://protected-atoll-95594.herokuapp.com
 
+### Features:
+parses Guardant Health lunch menu from https://docs.google.com/spreadsheets/d/1VhHL-5Oq9Y9kceM-qcFBf-zlfdyEVvog76WFw52uBYc/pubhtml
+updates realtime of food's rating
 
 ### git ignore
 $ touch .gitignore
