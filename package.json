@@ -1,6 +1,7 @@
 {
-  "name": "express-example",
-  "version": "0.0.0",
+  "name": "food-rater",
+  "version": "1.0.0",
+  "description": "Guardant Health lunch rating and feedback app",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -15,5 +16,8 @@
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0",
     "stylus": "0.54.5"
+  },
+  "engines": {
+    "node": "6.3.1"
   }
 }
